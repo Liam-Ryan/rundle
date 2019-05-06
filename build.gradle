@@ -1,0 +1,23 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.github.liam-ryan'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.security:spring-security-config'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'com.auth0:auth0-spring-security-api:1.2.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

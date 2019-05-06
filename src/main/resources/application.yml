@@ -1,0 +1,17 @@
+spring:
+    datasource:
+      url: jdbc:mysql://mysql-server/database-name
+      username: myuser
+      password: mypassword
+    jpa:
+      #Print sql statements to console
+      show-sql: true
+      hibernate:
+        #Create model automatically ( data definition language auto )
+        ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL5Dialect
+auth0:
+  issuer: https://rundle.eu.auth0.com/
+  apiAudience: http://localhost:8080
