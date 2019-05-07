@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,8 +33,10 @@ public class PostsController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void create(@RequestBody Post post) {
+	public Post create(@RequestBody Post post) {
+		post.setLastEditedDate(new Date());
 		postRepository.save(post);
+		return post;
 	}
 
 	@GetMapping("/{id}")
@@ -45,5 +48,14 @@ public class PostsController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("id") long id) {
 		postRepository.deleteById(id);
+	}
+
+	@PutMapping("/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Post update(@PathVariable("id") long id, @RequestBody Post post) {
+		post.setId(id);
+		post.setLastEditedDate(new Date());
+		postRepository.save(post);
+		return post;
 	}
 }

@@ -28,3 +28,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+### Sensitive credentials ###
+/src/main/resources/application.yml
