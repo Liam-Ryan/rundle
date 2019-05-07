@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
+//@CrossOrigin(origins="coming-soon")
 public class PostsController {
 	private PostRepository postRepository;
 
@@ -57,5 +58,10 @@ public class PostsController {
 		post.setLastEditedDate(new Date());
 		postRepository.save(post);
 		return post;
+	}
+
+	@RequestMapping(method = RequestMethod.OPTIONS)
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	public void options() {
 	}
 }

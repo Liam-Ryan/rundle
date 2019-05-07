@@ -38,5 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAuthority("view:registration")
 			.anyRequest()
 			.authenticated();
+		http.cors();
 	}
 }
