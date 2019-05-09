@@ -1,0 +1,6 @@
+#Activate the 'dev' profile when launching the app either via environment variable or jvm argument to use these values
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydatabase
+settings:
+  allowed-origins: http://localhost:4200

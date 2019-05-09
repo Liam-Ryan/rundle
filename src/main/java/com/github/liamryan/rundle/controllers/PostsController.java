@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
-//@CrossOrigin(origins="coming-soon")
+@CrossOrigin(origins= {"${settings.allowed-origins}"})
 public class PostsController {
 	private PostRepository postRepository;
 
