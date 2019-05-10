@@ -8,6 +8,7 @@
 package com.github.liamryan.rundle.config;
 
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
+import com.github.liamryan.rundle.models.Permissions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,11 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.forRS256(apiAudience, issuer)
 			.configure(http)
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/api/v1/posts").hasAuthority("create:post")
-			.antMatchers(HttpMethod.GET, "/api/v1/posts").hasAuthority("view:registrations")
-			.antMatchers(HttpMethod.GET, "/api/v1/posts/**").hasAuthority("view:registration")
-			.antMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasAuthority("view:registration")
-			.antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAuthority("view:registration")
+			.antMatchers(HttpMethod.POST, "/api/v1/posts").hasAuthority(Permissions.Post.CREATE.getText())
+			.antMatchers(HttpMethod.GET, "/api/v1/posts").permitAll()
+			.antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+			.antMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasAuthority(Permissions.Post.DELETE.getText())
+			.antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAuthority(Permissions.Post.CREATE.getText())
 			.anyRequest()
 			.authenticated();
 		http.cors();

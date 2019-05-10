@@ -7,20 +7,37 @@
  */
 package com.github.liamryan.rundle.controllers;
 
+import com.github.liamryan.rundle.models.Permissions;
 import com.github.liamryan.rundle.models.Post;
 import com.github.liamryan.rundle.repositories.PostRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/posts")
-@CrossOrigin(origins= {"${settings.allowed-origins}"})
+@CrossOrigin(origins = {"${settings.allowed-origins}"})
 public class PostsController {
 	private PostRepository postRepository;
+	private Logger log = LoggerFactory.getLogger(PostsController.class);
+
+	private boolean hasAuthority(Permissions.Post permission) {
+		try {
+			return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(role -> role.getAuthority().equals(permission.getText()));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return false;
+		}
+	}
 
 	@Autowired
 	public PostsController(PostRepository postRepository) {
@@ -29,7 +46,10 @@ public class PostsController {
 
 	@GetMapping
 	public List<Post> list() {
-		return postRepository.findAll();
+		boolean canViewHidden = hasAuthority(Permissions.Post.VIEWHIDDEN);
+		return postRepository.findAll().stream()
+			.filter(post -> canViewHidden || !post.isHidden())
+			.collect(Collectors.toList());
 	}
 
 	@PostMapping
@@ -42,7 +62,15 @@ public class PostsController {
 
 	@GetMapping("/{id}")
 	public Post get(@PathVariable("id") long id) {
-		return postRepository.getOne(id);
+		try {
+			Post p = postRepository.getOne(id);
+			if (!p.isHidden() || hasAuthority(Permissions.Post.VIEWHIDDEN)) {
+				return p;
+			}
+		} catch(EntityNotFoundException e) {
+			log.info(String.format("Record not found for post id %d", id));
+		}
+		return null;
 	}
 
 	@DeleteMapping("/{id}")
