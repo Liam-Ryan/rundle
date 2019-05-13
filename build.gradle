@@ -12,6 +12,9 @@ sourceCompatibility = '1.8'
 repositories {
     mavenCentral()
 }
+test {
+    useJUnitPlatform()
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -19,5 +22,10 @@ dependencies {
     implementation 'org.springframework.security:spring-security-config'
     implementation 'mysql:mysql-connector-java'
     implementation 'com.auth0:auth0-spring-security-api:1.2.1'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
 }
+
+
