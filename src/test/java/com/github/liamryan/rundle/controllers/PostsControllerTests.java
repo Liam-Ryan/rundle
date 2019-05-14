@@ -6,7 +6,10 @@ import com.github.liamryan.rundle.repositories.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,41 +18,89 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-
 
 class PostsControllerTests {
 	private PostRepository postRepository;
 	private PostsController postsController;
 
-	PostsControllerTests() {
-		setupMockRepository();
-	}
+	private Collection<GrantedAuthority> viewHiddenAuthorities =
+		AuthorityUtils.createAuthorityList(Permissions.Post.VIEWHIDDEN.getText());
+
+	private Post hiddenPost;
+	private Post post;
+	private List<Post> posts;
 
 	@BeforeEach
 	void setup() {
-		resetPostsController();
+		setupMockRepository();
 		setupMockSecurityContextHolder();
+		resetPostsController();
+		refreshPostHelperObjects();
 	}
 
 	@Test
-	void roleCanViewHiddenPosts() {
+	void listRoleCanViewHiddenPosts() {
+		when(postRepository.findAll()).thenReturn(posts);
 		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
-			.thenReturn((Collection) AuthorityUtils.createAuthorityList(Permissions.Post.VIEWHIDDEN.getText()));
+			.thenReturn((Collection) this.viewHiddenAuthorities);
 
 		assertEquals(postsController.list().size(), 2);
 	}
 
 	@Test
-	void noRoleHidesHiddenPosts() {
+	void listNoRoleHidesHiddenPosts() {
+		when(postRepository.findAll()).thenReturn(posts);
 		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
 			.thenReturn(null);
 		List<Post> posts = postsController.list();
 
 		assertEquals(posts.size(), 1);
 		assertFalse(posts.get(0).isHidden());
+	}
+
+	@Test
+	void getRoleCanViewHiddenPosts() {
+		when(postRepository.getOne(1L)).thenReturn(hiddenPost);
+		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+			.thenReturn((Collection) this.viewHiddenAuthorities);
+
+		assertNotNull(postsController.get(1));
+	}
+
+	@Test
+	void getRoleCanViewNormalPosts() {
+		when(postRepository.getOne(1L)).thenReturn(post);
+		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+			.thenReturn((Collection) this.viewHiddenAuthorities);
+
+		assertNotNull(postsController.get(1));
+	}
+
+	@Test
+	void getNoRoleHidesHiddenPosts() {
+		when(postRepository.getOne(1L)).thenReturn(hiddenPost);
+		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+			.thenReturn(null);
+
+		assertNull(postsController.get(1));
+	}
+
+	@Test
+	void getNoRoleCanViewNormalPosts() {
+		when(postRepository.getOne(1L)).thenReturn(post);
+		when(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+			.thenReturn(null);
+
+		assertNotNull(postsController.get(1));
+	}
+
+	@Test
+	void createSetsLastEditedDate() {
+		when(postRepository.save(this.post)).thenReturn(this.post);
+
+		assertNotNull(postsController.create(post).getLastEditedDate());
 	}
 
 	private void resetPostsController() {
@@ -65,10 +116,11 @@ class PostsControllerTests {
 
 	private void setupMockRepository() {
 		postRepository = Mockito.mock(PostRepository.class);
-		List<Post> posts = Arrays.asList(
-			new Post("dummy", "dummy", null, null, "hidden", "", true),
-			new Post("dummy", "dummy", null, null, "visible", "", false)
-		);
-		when(postRepository.findAll()).thenReturn(posts);
+	}
+
+	private void refreshPostHelperObjects() {
+		hiddenPost = new Post("dummy", "dummy", null, null, "hidden", "", true);
+		post = new Post("dummy", "dummy", null, null, "visible", "", false);
+		posts = Arrays.asList(hiddenPost, post);
 	}
 }
