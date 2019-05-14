@@ -19,6 +19,20 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
+	/* Required for hibernate since full constructor is declared for testing, do not remove */
+	public Post() {
+	}
+
+	public Post(String description, String content, Date lastEditedDate, List<String> tags, String title, String category, boolean isHidden) {
+		this.description = description;
+		this.content = content;
+		this.lastEditedDate = lastEditedDate;
+		this.tags = tags;
+		this.title = title;
+		this.category = category;
+		this.isHidden = isHidden;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -41,68 +55,68 @@ public class Post {
 	private String category;
 	private boolean isHidden;
 
-	public Long getId () {
+	public Long getId() {
 		return id;
 	}
 
 	//auto-generated but jackson needs the method for marshalling
-	public void setId (Long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getTitle () {
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle (String title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public List<String> getTags () {
+	public List<String> getTags() {
 		return tags;
 	}
 
-	public void setTags (List<String> tags) {
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 
-	public String getCategory () {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory (String category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
-	public String getContent () {
+	public String getContent() {
 		return content;
 	}
 
-	public void setContent (String content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 
-	public boolean isHidden () {
+	public boolean isHidden() {
 		return isHidden;
 	}
 
-	public void setHidden (boolean hidden) {
+	public void setHidden(boolean hidden) {
 		isHidden = hidden;
 	}
 
-	public String getDescription () {
+	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription (String description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public Date getLastEditedDate () {
+	public Date getLastEditedDate() {
 		return lastEditedDate;
 	}
 
-	public void setLastEditedDate (Date lastEditedDate) {
+	public void setLastEditedDate(Date lastEditedDate) {
 		this.lastEditedDate = lastEditedDate;
 	}
 }
