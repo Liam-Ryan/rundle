@@ -7,6 +7,7 @@
  */
 package com.github.liamryan.rundle.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -20,10 +21,9 @@ import java.util.List;
 public class Post {
 
 	/* Required for hibernate since full constructor is declared for testing, do not remove */
-	public Post() {
-	}
+	private Post() {}
 
-	public Post(String description, String content, Date lastEditedDate, List<String> tags, String title, String category, boolean isHidden) {
+	public Post(String description, String content, Date lastEditedDate, List<String> tags, String title, Category category, boolean isHidden) {
 		this.description = description;
 		this.content = content;
 		this.lastEditedDate = lastEditedDate;
@@ -52,7 +52,12 @@ public class Post {
 	private List<String> tags;
 
 	private String title;
-	private String category;
+
+	@ManyToOne
+	@JoinColumn(name="category")
+	@JsonBackReference  //required by jackson, there's a corresponding annotation in Category.java
+	private Category category;
+
 	private boolean isHidden;
 
 	public Long getId() {
@@ -80,11 +85,11 @@ public class Post {
 		this.tags = tags;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
