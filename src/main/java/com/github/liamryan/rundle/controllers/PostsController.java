@@ -9,7 +9,6 @@ package com.github.liamryan.rundle.controllers;
 
 import com.github.liamryan.rundle.models.Permissions;
 import com.github.liamryan.rundle.models.Post;
-import com.github.liamryan.rundle.repositories.CategoryRepository;
 import com.github.liamryan.rundle.repositories.PostRepository;
 import com.github.liamryan.rundle.services.SecurityService;
 import org.slf4j.Logger;
@@ -89,7 +88,7 @@ public class PostsController {
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Post update(@PathVariable("id") long id, @RequestBody Post post) {
-		post.setId(id);
+		post.setPostId(id);
 		post.setLastEditedDate(new Date());
 		postRepository.save(post);
 		return post;

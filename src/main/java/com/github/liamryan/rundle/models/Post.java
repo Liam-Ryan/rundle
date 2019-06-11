@@ -7,7 +7,6 @@
  */
 package com.github.liamryan.rundle.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -21,7 +20,8 @@ import java.util.List;
 public class Post {
 
 	/* Required for hibernate since full constructor is declared for testing, do not remove */
-	private Post() {}
+	private Post() {
+	}
 
 	public Post(String description, String content, Date lastEditedDate, List<String> tags, String title, Category category, boolean isHidden) {
 		this.description = description;
@@ -35,7 +35,7 @@ public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Long postId;
 
 	@Lob
 	@Column(length = 100000)
@@ -45,7 +45,7 @@ public class Post {
 	@Column(length = 100000)
 	private String content;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
+	@JsonFormat(pattern = "MM-dd-yyyy")
 	private Date lastEditedDate;
 
 	@ElementCollection
@@ -54,19 +54,18 @@ public class Post {
 	private String title;
 
 	@ManyToOne
-	@JoinColumn(name="category")
-	@JsonBackReference  //required by jackson, there's a corresponding annotation in Category.java
+	@JoinColumn(name = "category")
 	private Category category;
 
 	private boolean isHidden;
 
-	public Long getId() {
-		return id;
+	public Long getPostId() {
+		return postId;
 	}
 
 	//auto-generated but jackson needs the method for marshalling
-	public void setId(Long id) {
-		this.id = id;
+	public void setPostId(Long postId) {
+		this.postId = postId;
 	}
 
 	public String getTitle() {

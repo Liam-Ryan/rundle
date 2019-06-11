@@ -1,6 +1,8 @@
 package com.github.liamryan.rundle.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,9 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category {
 
-	private Category(){}
+	private Category() {
+	}
 
 	public Category(String name, Post... posts) {
 		this.name = name;
@@ -22,20 +26,21 @@ public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private long categoryId;
 
 	private String name;
 
 	@OneToMany(mappedBy = "category")
-	@JsonManagedReference  //required by jackson, there's a corresponding annotation in Post.java
+	// prevent json infinite recursion, allowSetters is required to be true to access the json annotations on posts for deserializing
+	@JsonIgnoreProperties(value = "category", allowSetters = true)
 	private List<Post> posts;
 
-	public long getId() {
-		return id;
+	public long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setCategoryId(long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public String getName() {
@@ -59,12 +64,12 @@ public class Category {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Category category = (Category) o;
-		return id == category.id &&
+		return categoryId == category.categoryId &&
 			Objects.equals(name, category.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name);
+		return Objects.hash(categoryId, name);
 	}
 }
