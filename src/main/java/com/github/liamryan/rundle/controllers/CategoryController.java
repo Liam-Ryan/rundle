@@ -36,13 +36,25 @@ public class CategoryController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Category create(@RequestBody Category category) {
-		categoryRepository.save(category);
+		try {
+			categoryRepository.save(category);
+		} catch (org.hibernate.exception.ConstraintViolationException ignore) {
+
+		}
 		return category;
 	}
 
 	@GetMapping
 	public List<Category> list(Authentication authentication) {
-		boolean canViewHidden = securityService.hasAuthority(Permissions.Post.VIEWHIDDEN, authentication.getAuthorities());
+		boolean canViewHidden;
+
+		if(authentication != null) {
+			canViewHidden = securityService.hasAuthority(Permissions.Post.VIEWHIDDEN, authentication.getAuthorities());
+		} else {
+			//required for lambda ( must be effectively final )
+			canViewHidden = false;
+		}
+
 		List<Category> categories = categoryRepository.findAll();
 		categories.forEach(category -> filterCategoryPosts(canViewHidden, category));
 		return categories;

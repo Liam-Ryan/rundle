@@ -37,6 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
 			.antMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasAuthority(Permissions.Post.DELETE.getText())
 			.antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAuthority(Permissions.Post.CREATE.getText())
+			.antMatchers(HttpMethod.GET, "/api/v1/category").permitAll()
+			.antMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
+//			.antMatchers(HttpMethod.POST, "'api/v1/category").hasAuthority(Permissions.Category.CREATE.getText())
+			.antMatchers(HttpMethod.POST, "/api/v1/category/**").permitAll()
 			.anyRequest()
 			.authenticated();
 		http.cors();

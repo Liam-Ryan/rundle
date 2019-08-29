@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+//@TODO rename to post for consistency and best practices
 @RequestMapping("/api/v1/posts")
 @CrossOrigin(origins = {"${settings.allowed-origins}"})
 public class PostsController {

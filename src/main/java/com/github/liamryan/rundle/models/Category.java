@@ -15,17 +15,18 @@ public class Category {
 	private Category() {
 	}
 
-	public Category(String name, Post... posts) {
-		this.name = name;
-		this.posts = Stream.of(posts)
-			.collect(Collectors.toList());
-		this.posts.forEach(post -> post.setCategory(this));
-	}
+//	public Category(String name, Post... posts) {
+//		this.name = name;
+//		this.posts = Stream.of(posts)
+//			.collect(Collectors.toList());
+//		this.posts.forEach(post -> post.setCategory(this));
+//	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long categoryId;
 
+	@Column(unique = true)
 	private String name;
 
 	@OneToMany(mappedBy = "category")

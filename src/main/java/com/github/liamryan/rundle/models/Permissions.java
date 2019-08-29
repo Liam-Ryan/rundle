@@ -16,4 +16,19 @@ public class Permissions {
 			return this.permission;
 		}
 	}
+
+	public enum Category {
+		//@TODO create backend category permissions
+		CREATE("create:post");
+
+		private String permission;
+
+		Category(String permission) {
+			this.permission = permission;
+		}
+
+		public String getText() {
+			return this.permission;
+		}
+	}
 }
